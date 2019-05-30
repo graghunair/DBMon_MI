@@ -25,14 +25,7 @@ ALTER TABLE [dbo].[tblDBMon_Table_Size] ADD  CONSTRAINT [DF_tblDBMon_Table_Size_
 CREATE CLUSTERED INDEX [IDX_tblDBMon_Table_Size] ON [dbo].[tblDBMon_Table_Size]([Date_Captured])
 GO
 
-
-
-
 DROP PROCEDURE IF EXISTS [dbo].[uspDBMon_GetTableSize]
-GO
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE proc [dbo].[uspDBMon_GetTableSize]
@@ -42,7 +35,7 @@ AS
 		Author	:	Raghu Gopalakrishnan
 		Date	:	30th May 2019
 		Purpose	:	This Stored Procedure is used by the DBMon tool
-		Version	:	1.0 GDBS
+		Version	:	1.0 GTS
 		License:
 		This script is provided "AS IS" with no warranties, and confers no rights.
 					EXEC [dbo].[uspDBMon_GetTableSize] @Database_Name = 'dba_local'
@@ -127,26 +120,11 @@ WHERE	SP_Name = 'uspDBMon_GetTableSize'
 GO
 
 INSERT INTO [dbo].[tblDBMon_SP_Version] (SP_Name, SP_Version, Last_Executed, Date_Modified, Modified_By)
-VALUES ('uspDBMon_GetTableSize', '1.0 GDBS', NULL, GETDATE(), SUSER_SNAME())
+VALUES ('uspDBMon_GetTableSize', '1.0 GTS', NULL, GETDATE(), SUSER_SNAME())
 GO
 
-IF EXISTS (SELECT 1 FROM fn_listextendedproperty('Version','SCHEMA','dbo','PROCEDURE', 'uspDBMon_GetTableSize', NULL, NULL))
-	BEGIN
-		exec sp_dropextendedproperty 
-			@name = 'Version',
-			@level0type = 'Schema', @level0name = 'dbo', 
-			@level1type = 'PROCEDURE', @level1name = 'uspDBMon_GetTableSize'
-			
-		exec sp_addextendedproperty 
-			@name = 'Version', @value = '1.0 GDBS', 
-			@level0type = 'SCHEMA', @level0name = 'dbo', 
-			@level1type = 'PROCEDURE', @level1name = 'uspDBMon_GetTableSize'
-	END
-ELSE
-	BEGIN
-		exec sp_addextendedproperty 
-			@name = 'Version', @value = '1.0 GDBS', 
-			@level0type = 'SCHEMA', @level0name = 'dbo', 
-			@level1type = 'PROCEDURE', @level1name = 'uspDBMon_GetTableSize'
-	END
+EXEC sp_addextendedproperty 
+	@name = 'Version', @value = '1.0 GTS', 
+	@level0type = 'SCHEMA', @level0name = 'dbo', 
+	@level1type = 'PROCEDURE', @level1name = 'uspDBMon_GetTableSize'
 GO
