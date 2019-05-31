@@ -122,7 +122,8 @@ WHILE (@varSP_Name IS NOT NULL)
 	END
 
 SET @varScript_Version_JSON = (	SELECT	[SP_Name], 
-										[SP_Version] 
+										[SP_Version],
+										[Last_Executed]
 								FROM	[dbo].[tblDBMon_SP_Version] Script_Version 
 								FOR JSON PATH)
 
