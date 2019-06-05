@@ -1,6 +1,8 @@
 /*
 	Name	:	uspDBMon_rptGetMICurrentAlerts
 	Purpose	:	This script includes all the monitoring SPs and code within the DBA_DBMon_AZURE_MI database for reporting issues
+	Date	:	June 5th, 2019
+
 */
 
 
@@ -141,7 +143,7 @@ INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter],[Config_Paramete
 VALUES('uspDBMon_rptGetMICurrentAlerts_TTL','358')
 --Strati-AF-SQLServer@email.wal-mart.com;
 INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter],[Config_Parameter_Value])
-VALUES('uspDBMon_rptGetMICurrentAlerts_Mail_Address','Raghu.Gopalakrishnan@microsoft.com;vn502i6@wal-mart.com')
+VALUES('uspDBMon_rptGetMICurrentAlerts_Mail_Address','Strati-AF-SQLServer@email.wal-mart.com;Raghu.Gopalakrishnan@microsoft.com;vn502i6@wal-mart.com')
 INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter],[Config_Parameter_Value])
 VALUES('uspDBMon_rptGetMICurrentAlerts_Minutes_Down_Threshold','1')
 
@@ -155,7 +157,7 @@ AS
 		Author	:	Raghu Gopalakrishnan
 		Date	:	6th May 2019
 		Purpose	:	This Stored Procedure is used by the DBMon tool
-		Version	:	1.1 GDI
+		Version	:	1.2 GDI
 		License:
 		This script is provided "AS IS" with no warranties, and confers no rights.
 					EXEC [dbo].[uspDBMon_rptGetMICurrentAlerts]
@@ -230,8 +232,8 @@ IF EXISTS (SELECT TOP 1 1 FROM [dbo].[vwManaged_Instance_Details] WHERE Last_Han
 	END
 ELSE
 	BEGIN
-		PRINT 'All Managed Instances have responded in the last ' + CAST(@varuspDBMon_rptGetMICurrentAlerts_Minutes_Down_Threshold AS VARCHAR(5)) + ' minutes. '
-		SET @vartableHTML_Good = N'<p>All Managed Instances have responded in the last ' + CAST(@varuspDBMon_rptGetMICurrentAlerts_Minutes_Down_Threshold AS VARCHAR(5)) + ' minutes. <p>' 
+		PRINT 'All Managed Instances have responded in the last ' + CAST(@varuspDBMon_rptGetMICurrentAlerts_Minutes_Down_Threshold AS VARCHAR(5)) + ' minute(s). '
+		SET @vartableHTML_Good = N'<p>All Managed Instances have responded in the last ' + CAST(@varuspDBMon_rptGetMICurrentAlerts_Minutes_Down_Threshold AS VARCHAR(5)) + ' minute(s). <p>' 
 	END
 
 IF EXISTS (SELECT TOP 1 1 FROM [dbo].[vwManaged_Instance_Parameters_Monitored] WHERE [CPU_Utilization_Flag] = 'TRUE')
@@ -295,7 +297,7 @@ IF EXISTS (SELECT TOP 1 1 FROM [dbo].[vwManaged_Instance_Parameters_Monitored] W
 	END
 ELSE
 	BEGIN
-		PRINT 'All Managed Instances have PLE more than their threshold.'
+		PRINT 'All Managed Instances have PLE value more than the threshold.'
 		SET @vartableHTML_Good = @vartableHTML_Good + N'<p>All Managed Instances have PLE value greater than the threshold.</p>'
 	END
 
@@ -458,7 +460,7 @@ GO
 IF EXISTS (SELECT TOP 1 1 FROM [dbo].[tblDBMon_SP_Version] WHERE [SP_Name] = 'uspDBMon_rptGetMICurrentAlerts')
 	BEGIN
 		UPDATE	[dbo].[tblDBMon_SP_Version]
-		SET		[SP_Version] = '1.1 GCA',
+		SET		[SP_Version] = '1.2 GCA',
 				[Last_Executed] = NULL,
 				[Date_Modified] = GETDATE(),
 				[Modified_By] = SUSER_SNAME()
@@ -467,12 +469,12 @@ IF EXISTS (SELECT TOP 1 1 FROM [dbo].[tblDBMon_SP_Version] WHERE [SP_Name] = 'us
 ELSE
 	BEGIN
 		INSERT INTO [dbo].[tblDBMon_SP_Version] ([SP_Name], [SP_Version], [Last_Executed], [Date_Modified], [Modified_By])
-		VALUES ('uspDBMon_rptGetMICurrentAlerts', '1.1 GCA', NULL, GETDATE(), SUSER_SNAME())
+		VALUES ('uspDBMon_rptGetMICurrentAlerts', '1.2 GCA', NULL, GETDATE(), SUSER_SNAME())
 	END
 GO
 
 EXEC sp_addextendedproperty 
-	@name = 'Version', @value = '1.1 GCA', 
+	@name = 'Version', @value = '1.2 GCA', 
 	@level0type = 'SCHEMA', @level0name = 'dbo', 
 	@level1type = 'PROCEDURE', @level1name = 'uspDBMon_rptGetMICurrentAlerts'
 GO
