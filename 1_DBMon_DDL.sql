@@ -32,11 +32,15 @@ VALUES ('Purge_tblDBMon_ERRORLOG_Days','30')
 INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter], [Config_Parameter_Value])
 VALUES ('Purge_tblDBMon_Managed_Instance_Response_Days','14')
 INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter], [Config_Parameter_Value])
+VALUES ('Purge_tblDBMon_PLE_Days','100')
+INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter], [Config_Parameter_Value])
 VALUES ('Threshold_CPU_Utilization_Percentage','80')
 INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter], [Config_Parameter_Value])
 VALUES ('Threshold_Storage_Utilization_Percentage','80')
 INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter], [Config_Parameter_Value])
 VALUES ('Threshold_CPU_Utilization_Minutes','15')
+INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter], [Config_Parameter_Value])
+VALUES ('Threshold_PLE_Minutes','60')
 INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter], [Config_Parameter_Value])
 VALUES ('Threshold_Filegroup_Space_Utilization_Percentage','80')
 
@@ -109,4 +113,17 @@ CREATE TABLE [dbo].[tblDBMon_SP_Version](
 (
 	[SP_Name] ASC
 ))
+GO
+
+DROP TABLE IF EXISTS [dbo].[tblDBMon_PLE]
+GO
+
+CREATE TABLE [dbo].[tblDBMon_PLE](
+	[Date_Captured] [DATETIME] NOT NULL,
+	[PLE] [BIGINT] NULL,
+	[Expected_PLE] [BIGINT] NULL)
+GO
+
+CREATE CLUSTERED INDEX IDX_tblDBMon_PLE_Date_Captured ON [dbo].[tblDBMon_PLE]([Date_Captured])
+ALTER TABLE [dbo].[tblDBMon_PLE] ADD CONSTRAINT [DF_tblDBMon_Config_Details_Date_Captured]  DEFAULT (GETDATE()) FOR [Date_Captured]
 GO

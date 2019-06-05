@@ -46,6 +46,7 @@ AS
 		----------------------
 		May	 3rd, 2019	:	v1.0	:	Raghu Gopalakrishnan	:	Inception
 		May  6th, 2019	:	v1.1	:	Raghu Gopalakrishnan	:	Added logic to capture SP output locally in table: [dbo].[tblDBMon_Managed_Instance_Response]
+		June 5th, 2019	:	v1.2	:	Raghu Gopalakrishnan	:	Added logic to capture PLE value to be used for monitoring over a period of time
 	*/
 
 SET NOCOUNT ON
@@ -65,12 +66,17 @@ DECLARE @varScript_Version_JSON										NVARCHAR(MAX)
 DECLARE @varParameters_Monitored_JSON								VARCHAR(MAX)
 DECLARE @varPurge_tblDBMon_ERRORLOG_Days							TINYINT
 DECLARE @varPurge_tblDBMon_Managed_Instance_Response_Days			TINYINT
+DECLARE @varPurge_tblDBMon_PLE_Days										TINYINT
 DECLARE @varThreshold_Sys_Server_Resource_Stats_End_Time_Minutes	TINYINT
 DECLARE @varSP_Name													SYSNAME
 
 SELECT	@varPurge_tblDBMon_Managed_Instance_Response_Days = [Config_Parameter_Value]
 FROM	[dbo].[tblDBMon_Config_Details] 
 WHERE	[Config_Parameter] = 'Purge_tblDBMon_Managed_Instance_Response_Days'
+
+SELECT	@varPurge_tblDBMon_PLE_Days = [Config_Parameter_Value]
+FROM	[dbo].[tblDBMon_Config_Details] 
+WHERE	[Config_Parameter] = 'Purge_tblDBMon_PLE_Days'
 
 SELECT	@varThreshold_Sys_Server_Resource_Stats_End_Time_Minutes = [Config_Parameter_Value]
 FROM	[dbo].[tblDBMon_Config_Details] 
@@ -92,6 +98,17 @@ ORDER BY	[start_time] DESC
 SELECT	@varProcess_Memory_Limit_MB = process_memory_limit_mb, 
 		@varNon_SOS_Memory_Gap_MB = non_sos_mem_gap_mb 
 FROM	[master].[sys].[dm_os_job_object]
+
+INSERT INTO	[dbo].[tblDBMon_PLE]([Date_Captured], [PLE], [Expected_PLE])
+SELECT		GETDATE() AS [Date_Captured], 
+			v.cntr_value AS [PLE], 
+			(((l.cntr_value*8/1024)/1024)/4)*300 AS [Expected_PLE]
+FROM		[sys].[dm_os_performance_counters] v
+INNER JOIN	[sys].[dm_os_performance_counters] l 
+		ON	v.[object_name] = l.[object_name]
+WHERE		v.[counter_name] = 'Page Life Expectancy'
+AND			l.[counter_name] = 'Database pages'
+AND			l.[object_name] LIKE '%Buffer Node%'
 
 EXEC [dbo].[uspDBMon_MI_Monitor_Parameters]
 
@@ -161,6 +178,10 @@ DELETE	TOP (10000)
 FROM	[dbo].[tblDBMon_ERRORLOG]
 WHERE	[Timestamp] < GETDATE() - @varPurge_tblDBMon_ERRORLOG_Days
 
+DELETE	TOP (10000)
+FROM	[dbo].[tblDBMon_ERRORLOG]
+WHERE	[Timestamp] < GETDATE() - @varPurge_tblDBMon_PLE_Days
+
 SELECT	TOP 1
 		[Captured_Timestamp_UTC],
 		CAST(SERVERPROPERTY('servername') AS  NVARCHAR(256)) AS [Managed_Instance_Name],
@@ -186,7 +207,7 @@ GO
 IF EXISTS (SELECT TOP 1 1 FROM [dbo].[tblDBMon_SP_Version] WHERE [SP_Name] = 'uspDBMon_MI')
 	BEGIN
 		UPDATE	[dbo].[tblDBMon_SP_Version]
-		SET		[SP_Version] = '1.1',
+		SET		[SP_Version] = '1.2',
 				[Last_Executed] = NULL,
 				[Date_Modified] = GETDATE(),
 				[Modified_By] = SUSER_SNAME()
@@ -195,12 +216,12 @@ IF EXISTS (SELECT TOP 1 1 FROM [dbo].[tblDBMon_SP_Version] WHERE [SP_Name] = 'us
 ELSE
 	BEGIN
 		INSERT INTO [dbo].[tblDBMon_SP_Version] ([SP_Name], [SP_Version], [Last_Executed], [Date_Modified], [Modified_By])
-		VALUES ('uspDBMon_MI', '1.1', NULL, GETDATE(), SUSER_SNAME())
+		VALUES ('uspDBMon_MI', '1.2', NULL, GETDATE(), SUSER_SNAME())
 	END
 GO
 
 EXEC sp_addextendedproperty 
-	@name = 'Version', @value = '1.1', 
+	@name = 'Version', @value = '1.2', 
 	@level0type = 'SCHEMA', @level0name = 'dbo', 
 	@level1type = 'PROCEDURE', @level1name = 'uspDBMon_MI'
 GO

@@ -91,9 +91,9 @@ SELECT		TOP 1
 FROM		@tblSQLPerf a
 INNER JOIN	[sys].[databases] b
 		ON	a.[Database_Name] = b.[name] COLLATE database_default
-WHERE		[Log_Space_Used%] >= @varThreshold_Mail_TLog_Utilization_Percentage  
 ORDER BY	[Log_Space_Used%] DESC
 
+--Check there are databases with tlog utilization greater than the threshold
 IF EXISTS (SELECT 1 FROM @tblSQLPerf WHERE [Log_Space_Used%] >= @varThreshold_Mail_TLog_Utilization_Percentage)
 	BEGIN
 		--Database(s) exceed the threshold. Need to Alert!.

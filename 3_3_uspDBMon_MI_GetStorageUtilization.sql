@@ -23,33 +23,38 @@ AS
 	
 		Modification History
 		----------------------
-		May	 6th, 2019	:	v1.1	:	Raghu Gopalakrishnan	:	Inception
+		May	 6th, 2019	:	v1.0	:	Raghu Gopalakrishnan	:	Inception
+		Jun	 5th, 2019	:	v1.1	:	Raghu Gopalakrishnan	:	Added description to be logged in [dbo].[tblDBMon_Parameters_Monitored]
 	*/
 SET NOCOUNT ON
 SET CONCAT_NULL_YIELDS_NULL OFF
 SET ANSI_WARNINGS OFF
 
-DECLARE @varThreshold_MI_Storage_Utilization_Percentage TINYINT
-DECLARE @varMI_Storage_Utilization_Percentage DECIMAL(5,2)
-DECLARE @varText VARCHAR(2000)
+DECLARE @varThreshold_MI_Storage_Utilization_Percentage	TINYINT
+DECLARE @varMI_Storage_Utilization_Percentage			DECIMAL(5,2)
+DECLARE @varText										VARCHAR(2000)
+DECLARE @varStorage_Space_Used_MB						VARCHAR(30)
+DECLARE @varReserved_Storage_MB							VARCHAR(30)
 
 SELECT	@varThreshold_MI_Storage_Utilization_Percentage = [Config_Parameter_Value]
 FROM	[dbo].[tblDBMon_Config_Details]
 WHERE	[Config_Parameter] = 'Threshold_Storage_Utilization_Percentage'
 
 SELECT		TOP 1
+			@varReserved_Storage_MB = [reserved_storage_mb],
+			@varStorage_Space_Used_MB = [storage_space_used_mb],
 			@varMI_Storage_Utilization_Percentage = (([storage_space_used_mb]/[reserved_storage_mb])*100)
 FROM		[master].[sys].[server_resource_stats]
 ORDER BY	[start_time] DESC
 
-SELECT	@varText = 'MI Storage Utilization Percentage: ' + CAST(@varMI_Storage_Utilization_Percentage AS VARCHAR(7)) + '. Threshold: ' + CAST(@varThreshold_MI_Storage_Utilization_Percentage AS VARCHAR(5)) + '.'
+SELECT	@varText = 'Reserved: ' + @varReserved_Storage_MB + ' MB. Used: ' + @varStorage_Space_Used_MB + ' MB.'
 IF (@varMI_Storage_Utilization_Percentage >= @varThreshold_MI_Storage_Utilization_Percentage)
 	BEGIN
 			UPDATE	[dbo].[tblDBMon_Parameters_Monitored]
 			SET		[Parameter_Value] = CAST(@varMI_Storage_Utilization_Percentage AS VARCHAR(7)) + '%',
 					[Parameter_Threshold] = CAST(@varThreshold_MI_Storage_Utilization_Percentage AS VARCHAR(5)) + '%',
 					[Parameter_Alert_Flag] = 1,
-					[Parameter_Value_Desc] = NULL
+					[Parameter_Value_Desc] = @varText
 			WHERE	[Parameter_Name] = 'Storage Utilization'
 
 			INSERT INTO [dbo].[tblDBMon_ERRORLOG]([Timestamp], [Source], [Message],	[Alert_Flag])
@@ -61,7 +66,7 @@ ELSE
 			SET		[Parameter_Value] = CAST(@varMI_Storage_Utilization_Percentage AS VARCHAR(7)) + '%',
 					[Parameter_Threshold] = CAST(@varThreshold_MI_Storage_Utilization_Percentage AS VARCHAR(5)) + '%',
 					[Parameter_Alert_Flag] = 0,
-					[Parameter_Value_Desc] = NULL
+					[Parameter_Value_Desc] = @varText
 			WHERE	[Parameter_Name] = 'Storage Utilization'
 
 			INSERT INTO [dbo].[tblDBMon_ERRORLOG]([Timestamp], [Source], [Message],	[Alert_Flag])

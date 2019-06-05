@@ -47,7 +47,7 @@ DECLARE @varText									VARCHAR(2000)
 	FROM		[master].[sys].[server_resource_stats]
 	WHERE		[end_time] > DATEADD(mi, -@varThreshold_CPU_Utilization_Minutes, GETUTCDATE()) 
 
-	SELECT	@varText = 'CPU Utilization Percentage: ' + CAST(@varCPU_Utilization_Percentage AS VARCHAR(7)) + '. Threshold: ' + CAST(@varThreshold_CPU_Utilization_Percentage AS VARCHAR(5)) + '.'
+	SELECT	@varText = 'CPU Utilization: ' + CAST(@varCPU_Utilization_Percentage AS VARCHAR(7)) + '%. Threshold: ' + CAST(@varThreshold_CPU_Utilization_Percentage AS VARCHAR(5)) + '%. Time Duration: ' + CAST(@varThreshold_CPU_Utilization_Minutes AS VARCHAR(5)) + ' mins.'
 
 	IF (@varCPU_Utilization_Percentage >= @varThreshold_CPU_Utilization_Percentage)
 		BEGIN
@@ -55,7 +55,7 @@ DECLARE @varText									VARCHAR(2000)
 			SET		[Parameter_Value] = CAST(@varCPU_Utilization_Percentage AS VARCHAR(7)) + '%',
 					[Parameter_Threshold] = CAST(@varThreshold_CPU_Utilization_Percentage AS VARCHAR(5)) + '%',
 					[Parameter_Alert_Flag] = 1,
-					[Parameter_Value_Desc] = NULL
+					[Parameter_Value_Desc] = @varText
 			WHERE	[Parameter_Name] = 'CPU Utilization'
 
 			INSERT INTO [dbo].[tblDBMon_ERRORLOG]([Timestamp], [Source], [Message],	[Alert_Flag])
@@ -67,7 +67,7 @@ DECLARE @varText									VARCHAR(2000)
 			SET		[Parameter_Value] = CAST(@varCPU_Utilization_Percentage AS VARCHAR(7)) + '%',
 					[Parameter_Threshold] = CAST(@varThreshold_CPU_Utilization_Percentage AS VARCHAR(5)) + '%',
 					[Parameter_Alert_Flag] = 0,
-					[Parameter_Value_Desc] = NULL
+					[Parameter_Value_Desc] = @varText
 			WHERE	[Parameter_Name] = 'CPU Utilization'	
 
 			INSERT INTO [dbo].[tblDBMon_ERRORLOG]([Timestamp], [Source], [Message],	[Alert_Flag])
