@@ -20,6 +20,8 @@ AS
 		License:
 		This script is provided "AS IS" with no warranties, and confers no rights.
 					EXEC [dbo].[uspDBMon_MI_GetStorageUtilization]
+					Reference:
+					https://docs.microsoft.com/en-us/sql/relational-databases/system-catalog-views/sys-server-resource-stats-azure-sql-database?view=azuresqldb-current
 	
 		Modification History
 		----------------------

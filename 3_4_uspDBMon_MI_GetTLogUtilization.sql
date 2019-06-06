@@ -20,6 +20,8 @@ AS
 		License:
 		This script is provided "AS IS" with no warranties, and confers no rights.
 					EXEC [dbo].[uspDBMon_MI_GetTLogUtilization]
+					Reference:
+					https://docs.microsoft.com/en-us/sql/t-sql/database-console-commands/dbcc-sqlperf-transact-sql
 	
 		Modification History
 		----------------------

@@ -20,6 +20,10 @@ AS
 		License:
 		This script is provided "AS IS" with no warranties, and confers no rights.
 					EXEC [dbo].[uspDBMon_MI_GetFilegroupUtilization]
+					Reference:
+					https://docs.microsoft.com/en-us/sql/t-sql/functions/fileproperty-transact-sql
+					https://docs.microsoft.com/en-us/sql/relational-databases/system-catalog-views/sys-database-files-transact-sql
+					https://docs.microsoft.com/en-us/sql/relational-databases/system-catalog-views/sys-filegroups-transact-sql
 	
 		Modification History
 		----------------------

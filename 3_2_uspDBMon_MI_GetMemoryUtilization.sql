@@ -34,8 +34,8 @@ SET NOCOUNT ON
 SET CONCAT_NULL_YIELDS_NULL OFF
 
 
-DECLARE @varPLE			VARCHAR(50)
-DECLARE @varMinPLE		VARCHAR(50)
+DECLARE @varPLE			BIGINT
+DECLARE @varMinPLE		BIGINT
 DECLARE @varText		VARCHAR(2000)
 DECLARE @varPLE_Minutes TINYINT
 
@@ -49,13 +49,13 @@ WHERE	[Config_Parameter] = 'Threshold_PLE_Minutes'
 	FROM		[dbo].[tblDBMon_PLE]
 	WHERE		[Date_Captured] > DATEADD(mi, -@varPLE_Minutes, GETDATE())
 
-	SELECT	@varText = 'PLE: ' + @varPLE + '. Expected PLE: ' + @varMinPLE + '. Time Threshold: ' + CAST(@varPLE_Minutes AS VARCHAR(5)) + ' mins.'
+	SELECT	@varText = 'PLE: ' + CAST(@varPLE AS VARCHAR(30)) + '. Expected PLE: ' + CAST(@varMinPLE AS VARCHAR(30)) + '. Time Threshold: ' + CAST(@varPLE_Minutes AS VARCHAR(5)) + ' mins.'
 
 	IF (@varPLE < @varMinPLE)
 		BEGIN
 			UPDATE	[dbo].[tblDBMon_Parameters_Monitored]
-			SET		[Parameter_Value] = CAST(@varPLE AS VARCHAR(50)),
-					[Parameter_Threshold] = CAST(@varMinPLE AS VARCHAR(50)),
+			SET		[Parameter_Value] = CAST(@varPLE AS VARCHAR(30)),
+					[Parameter_Threshold] = CAST(@varMinPLE AS VARCHAR(30)),
 					[Parameter_Alert_Flag] = 1,
 					[Parameter_Value_Desc] = @varText
 			WHERE	[Parameter_Name] = 'Memory Utilization'
@@ -66,8 +66,8 @@ WHERE	[Config_Parameter] = 'Threshold_PLE_Minutes'
 	ELSE
 		BEGIN
 			UPDATE	[dbo].[tblDBMon_Parameters_Monitored]
-			SET		[Parameter_Value] = CAST(@varPLE AS VARCHAR(50)),
-					[Parameter_Threshold] = CAST(@varMinPLE AS VARCHAR(50)),
+			SET		[Parameter_Value] = CAST(@varPLE AS VARCHAR(30)),
+					[Parameter_Threshold] = CAST(@varMinPLE AS VARCHAR(30)),
 					[Parameter_Alert_Flag] = 0,
 					[Parameter_Value_Desc] = @varText
 			WHERE	[Parameter_Name] = 'Memory Utilization'	
