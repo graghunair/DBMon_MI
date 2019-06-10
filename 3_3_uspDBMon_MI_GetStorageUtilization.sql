@@ -101,3 +101,7 @@ EXEC sp_addextendedproperty
 	@level0type = 'SCHEMA', @level0name = 'dbo', 
 	@level1type = 'PROCEDURE', @level1name = 'uspDBMon_MI_GetStorageUtilization'
 GO
+
+EXEC [dbo].[uspDBMon_MI_TrackDBAChanges] 'Installed SP: uspDBMon_MI_GetStorageUtilization'
+GO
+

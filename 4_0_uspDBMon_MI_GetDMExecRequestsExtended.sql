@@ -192,3 +192,7 @@ EXEC sp_addextendedproperty
 	@level1type = 'PROCEDURE', @level1name = 'uspDBMon_MI_GetDMExecRequestsExtended'
 GO
 
+USE [dba_local]
+GO
+EXEC [dbo].[uspDBMon_MI_TrackDBAChanges] 'Installed SP: uspDBMon_MI_GetDMExecRequestsExtended'
+GO

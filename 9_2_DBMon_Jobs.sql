@@ -233,3 +233,8 @@ EXEC sp_start_job @job_name=N'DBA - DBMon - Daily Capture'
 GO
 EXEC sp_start_job @job_name=N'Daily SQL Log Cycle'
 GO
+
+USE [dba_local]
+GO
+EXEC [dbo].[uspDBMon_MI_TrackDBAChanges] 'Installed SQL Agent Jobs: [DBA - DBMon], [DBA - DBMon - Daily Capture], [Daily SQL Log Cycle]'
+GO

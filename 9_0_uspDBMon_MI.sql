@@ -242,3 +242,8 @@ SELECT * FROM [dbo].[tblDBMon_Parameters_Monitored]
 GO
 SELECT * FROM [dbo].[tblDBMon_Managed_Instance_Response]
 GO
+
+USE [dba_local]
+GO
+EXEC [dbo].[uspDBMon_MI_TrackDBAChanges] 'Installed SP: uspDBMon_MI'
+GO
