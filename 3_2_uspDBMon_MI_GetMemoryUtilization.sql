@@ -7,6 +7,19 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+DROP TABLE IF EXISTS [dbo].[tblDBMon_PLE]
+GO
+
+CREATE TABLE [dbo].[tblDBMon_PLE](
+	[Date_Captured] [DATETIME] NOT NULL,
+	[PLE] [BIGINT] NULL,
+	[Expected_PLE] [BIGINT] NULL)
+GO
+
+CREATE CLUSTERED INDEX IDX_tblDBMon_PLE_Date_Captured ON [dbo].[tblDBMon_PLE]([Date_Captured])
+ALTER TABLE [dbo].[tblDBMon_PLE] ADD CONSTRAINT [DF_tblDBMon_Config_Details_Date_Captured]  DEFAULT (GETDATE()) FOR [Date_Captured]
+GO
+
 DROP PROCEDURE IF EXISTS [dbo].[uspDBMon_MI_GetMemoryUtilization]
 GO
 
