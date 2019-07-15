@@ -37,7 +37,7 @@ AS
 		Author	:	Raghu Gopalakrishnan
 		Date	:	3rd May 2019
 		Purpose	:	This Stored Procedure is used by the DBMon tool
-		Version	:	1.3
+		Version	:	1.4
 		License:
 		This script is provided "AS IS" with no warranties, and confers no rights.
 					EXEC [dbo].[usp_DBMon_MI]
@@ -52,6 +52,7 @@ AS
 		May  6th, 2019	:	v1.1	:	Raghu Gopalakrishnan	:	Added logic to capture SP output locally in table: [dbo].[tblDBMon_Managed_Instance_Response]
 		Jun  5th, 2019	:	v1.2	:	Raghu Gopalakrishnan	:	Added logic to capture PLE value to be used for monitoring over a period of time
 		Jun  6th, 2019	:	v1.3	:	Raghu Gopalakrishnan	:	Added logic to capture Requests, Root Blocker, Worker threads, config changes
+		Jul 15th, 2019	:	v1.4	:	Raghu Gopalakrishnan	:	Added logic to execute: uspDBMon_MI_GetDMHADRDatabaseReplicaStates
 	*/
 
 SET NOCOUNT ON
@@ -121,6 +122,7 @@ EXEC [dbo].[uspDBMon_MI_GetSysConfigurationsChanges]
 EXEC [dbo].[uspDBMon_MI_GetWorkerThreads]
 EXEC [dbo].[uspDBMon_MI_IdentifyRootBlocker]
 EXEC [dbo].[uspDBMon_MI_Monitor_Parameters]
+EXEC [dbo].[uspDBMon_MI_GetDMHADRDatabaseReplicaStates]
 
 SET @varParameters_Monitored_JSON = (SELECT		[Parameter_Name],
 												[Parameter_Value],
@@ -217,7 +219,7 @@ GO
 IF EXISTS (SELECT TOP 1 1 FROM [dbo].[tblDBMon_SP_Version] WHERE [SP_Name] = 'uspDBMon_MI')
 	BEGIN
 		UPDATE	[dbo].[tblDBMon_SP_Version]
-		SET		[SP_Version] = '1.3',
+		SET		[SP_Version] = '1.4',
 				[Last_Executed] = NULL,
 				[Date_Modified] = GETDATE(),
 				[Modified_By] = SUSER_SNAME()
@@ -226,12 +228,12 @@ IF EXISTS (SELECT TOP 1 1 FROM [dbo].[tblDBMon_SP_Version] WHERE [SP_Name] = 'us
 ELSE
 	BEGIN
 		INSERT INTO [dbo].[tblDBMon_SP_Version] ([SP_Name], [SP_Version], [Last_Executed], [Date_Modified], [Modified_By])
-		VALUES ('uspDBMon_MI', '1.3', NULL, GETDATE(), SUSER_SNAME())
+		VALUES ('uspDBMon_MI', '1.4', NULL, GETDATE(), SUSER_SNAME())
 	END
 GO
 
 EXEC sp_addextendedproperty 
-	@name = 'Version', @value = '1.3', 
+	@name = 'Version', @value = '1.4', 
 	@level0type = 'SCHEMA', @level0name = 'dbo', 
 	@level1type = 'PROCEDURE', @level1name = 'uspDBMon_MI'
 GO
@@ -245,5 +247,5 @@ GO
 
 USE [dba_local]
 GO
-EXEC [dbo].[uspDBMon_MI_TrackDBAChanges] 'Installed SP: uspDBMon_MI'
+EXEC [dbo].[uspDBMon_MI_TrackDBAChanges] 'Installed SP: uspDBMon_MI 1.4'
 GO
