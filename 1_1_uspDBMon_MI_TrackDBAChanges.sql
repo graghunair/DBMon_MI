@@ -15,6 +15,21 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+DROP TABLE IF EXISTS [dbo].[tblDBMon_SP_Version] 
+GO
+
+CREATE TABLE [dbo].[tblDBMon_SP_Version](
+		[SP_Name]			SYSNAME,
+		[SP_Version]		VARCHAR(15),
+		[Last_Executed]		DATETIME,
+		[Date_Modified]		DATETIME,
+		[Modified_By]		NVARCHAR(128),
+	CONSTRAINT [PK_tblDBMon_SP_Version] PRIMARY KEY CLUSTERED 
+(
+	[SP_Name] ASC
+))
+GO
+
 DROP TABLE IF EXISTS [dbo].[tblDBMon_Track_DBA_Changes]
 GO
 

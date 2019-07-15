@@ -113,19 +113,19 @@ ALTER TABLE [dbo].[tblDBMon_ERRORLOG] ADD  CONSTRAINT [DF_tblDBMon_ERRORLOG_Aler
 CREATE CLUSTERED INDEX IDX_tblDBMon_ERRORLOG ON [dbo].[tblDBMon_ERRORLOG]([Timestamp])
 GO
 
-DROP TABLE IF EXISTS [dbo].[tblDBMon_SP_Version] 
-GO
-
-CREATE TABLE [dbo].[tblDBMon_SP_Version](
-		[SP_Name]			SYSNAME,
-		[SP_Version]		VARCHAR(15),
-		[Last_Executed]		DATETIME,
-		[Date_Modified]		DATETIME,
-		[Modified_By]		NVARCHAR(128),
-	CONSTRAINT [PK_tblDBMon_SP_Version] PRIMARY KEY CLUSTERED 
-(
-	[SP_Name] ASC
-))
+IF NOT EXISTS (SELECT TOP 1 1 FROM sys.tables WHERE [name] = 'tblDBMon_SP_Version' AND SCHEMA_NAME(schema_id) = 'dbo')
+	BEGIN
+		CREATE TABLE [dbo].[tblDBMon_SP_Version](
+				[SP_Name]			SYSNAME,
+				[SP_Version]		VARCHAR(15),
+				[Last_Executed]		DATETIME,
+				[Date_Modified]		DATETIME,
+				[Modified_By]		NVARCHAR(128),
+			CONSTRAINT [PK_tblDBMon_SP_Version] PRIMARY KEY CLUSTERED 
+		(
+			[SP_Name] ASC
+		))
+	END
 GO
 
 EXEC [dbo].[uspDBMon_MI_TrackDBAChanges] 'Installed tables: [tblDBMon_Config_Details], [tblDBMon_Parameters_Monitored], [tblDBMon_ERRORLOG], [tblDBMon_SP_Version]'
