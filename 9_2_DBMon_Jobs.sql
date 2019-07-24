@@ -125,7 +125,14 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'DBMon',
 		@retry_attempts=0, 
 		@retry_interval=0, 
 		@os_run_priority=0, @subsystem=N'TSQL', 
-		@command=N'EXEC [dbo].[uspDBMon_MI]', 
+		@command=N'IF (CAST(DATABASEPROPERTYEX(''dba_local'',''Updateability'') AS VARCHAR(200)) = ''READ_WRITE'')
+	BEGIN
+		EXEC [dbo].[uspDBMon_MI]
+	END
+ELSE
+	BEGIN
+		PRINT ''Database not in Read-Write state.''
+	END', 
 		@database_name=N'dba_local', 
 		@flags=4
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
