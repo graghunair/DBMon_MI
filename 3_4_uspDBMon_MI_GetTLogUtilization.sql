@@ -16,7 +16,7 @@ AS
 		Author	:	Raghu Gopalakrishnan
 		Date	:	10th May 2019
 		Purpose	:	This Stored Procedure is used by the DBMon tool
-		Version	:	1.0 GTLU
+		Version	:	1.1 GTLU
 		License:
 		This script is provided "AS IS" with no warranties, and confers no rights.
 					EXEC [dbo].[uspDBMon_MI_GetTLogUtilization]
@@ -26,6 +26,7 @@ AS
 		Modification History
 		----------------------
 		May	 10th, 2019	:	v1.0	:	Raghu Gopalakrishnan	:	Inception
+		July 25th, 2019	:	v1.1	:	Raghu Gopalakrishnan	:	Added mail profile @profile_name = 'MI_Notification'
 	*/
 SET NOCOUNT ON
 SET CONCAT_NULL_YIELDS_NULL OFF
@@ -212,11 +213,13 @@ IF EXISTS (SELECT 1 FROM @tblSQLPerf WHERE [Log_Space_Used%] >= @varThreshold_Ma
 				END
 
 		SELECT @varMailSubject = '[TLog_SpaceUsage]: ' + CAST(SERVERPROPERTY('servername') as varchar(255)) + ' Transaction Log utilization exceeds threshold of ' + CAST(@varThreshold_Mail_TLog_Utilization_Percentage AS VARCHAR(5)) + '%'
-		--EXEC msdb.dbo.sp_send_dbmail @recipients=@varMail_Recepients,
-			--@subject = @varMailSubject,
-			--@body = @varTableHTML,
-			--@body_format = 'HTML',
-			--@exclude_query_output = 1
+		EXEC msdb.dbo.sp_send_dbmail 
+			@profile_name = 'MI_Notification',
+			@recipients=@varMail_Recepients,
+			@subject = @varMailSubject,
+			@body = @varTableHTML,
+			@body_format = 'HTML',
+			@exclude_query_output = 1
 	END
 ELSE
 	BEGIN
@@ -242,7 +245,7 @@ GO
 IF EXISTS (SELECT TOP 1 1 FROM [dbo].[tblDBMon_SP_Version] WHERE [SP_Name] = 'uspDBMon_MI_GetTLogUtilization')
 	BEGIN
 		UPDATE	[dbo].[tblDBMon_SP_Version]
-		SET		[SP_Version] = '1.0 GTLU',
+		SET		[SP_Version] = '1.1 GTLU',
 				[Last_Executed] = NULL,
 				[Date_Modified] = GETDATE(),
 				[Modified_By] = SUSER_SNAME()
@@ -251,12 +254,12 @@ IF EXISTS (SELECT TOP 1 1 FROM [dbo].[tblDBMon_SP_Version] WHERE [SP_Name] = 'us
 ELSE
 	BEGIN
 		INSERT INTO [dbo].[tblDBMon_SP_Version] ([SP_Name], [SP_Version], [Last_Executed], [Date_Modified], [Modified_By])
-		VALUES ('uspDBMon_MI_GetTLogUtilization', '1.0 GTLU', NULL, GETDATE(), SUSER_SNAME())
+		VALUES ('uspDBMon_MI_GetTLogUtilization', '1.1 GTLU', NULL, GETDATE(), SUSER_SNAME())
 	END
 GO
 
 EXEC sp_addextendedproperty 
-	@name = 'Version', @value = '1.0 GTLU', 
+	@name = 'Version', @value = '1.1 GTLU', 
 	@level0type = 'SCHEMA', @level0name = 'dbo', 
 	@level1type = 'PROCEDURE', @level1name = 'uspDBMon_MI_GetTLogUtilization'
 GO
