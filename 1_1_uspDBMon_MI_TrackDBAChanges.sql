@@ -55,7 +55,7 @@ CREATE PROCEDURE [dbo].[uspDBMon_MI_TrackDBAChanges]
 AS  
 /*
 	Author	:	Raghu Gopalakrishnan
-	Date	:	10th June 2019
+	Date	:	10th September 2019
 	Purpose	:	This Stored Procedure is used by the DBA team to manually track changes
 	Version	:	1.0 TDC
 	License:

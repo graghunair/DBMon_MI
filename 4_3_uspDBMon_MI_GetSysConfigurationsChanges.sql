@@ -29,7 +29,7 @@ CREATE PROCEDURE [dbo].[uspDBMon_MI_GetSysConfigurationsChanges]
 AS
 /*
 	Author	:	Raghu Gopalakrishnan
-	Date	:	6th June 2019
+	Date	:	6th September 2019
 	Purpose	:	This Stored Procedure is used by the DBMon tool
 	Version	:	1.0 RB
 	License:

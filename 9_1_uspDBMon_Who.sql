@@ -20,7 +20,7 @@ CREATE PROCEDURE [dbo].[uspDBMon_Who]
 AS
 /*
 	Author	:	Raghu Gopalakrishnan
-	Date	:	18th January 2018
+	Date	:	18th September 2018
 	Purpose	:	Return actively running requets with related data
 	Version	:	1.4 W
 	License:

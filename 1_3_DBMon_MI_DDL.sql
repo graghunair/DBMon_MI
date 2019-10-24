@@ -1,6 +1,6 @@
 /*
 	Author	:	Raghu Gopalakrishnan
-	Date	:	10th June 2019
+	Date	:	10th September 2019
 	Purpose	:	This script installs user tables used by the DBMon tool
 	Version	:	1.0
 	License:

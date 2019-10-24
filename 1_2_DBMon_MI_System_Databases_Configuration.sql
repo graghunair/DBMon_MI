@@ -1,6 +1,6 @@
 /*
 	Author	:	Raghu Gopalakrishnan
-	Date	:	10th June 2019
+	Date	:	10th September 2019
 	Purpose	:	This script sets database size for System Databases and user database: dba_local per DBA team standards.
 	Version	:	1.0
 	License:

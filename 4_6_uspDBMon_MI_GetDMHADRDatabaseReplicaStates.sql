@@ -96,7 +96,7 @@ AS
 
 /*
 	Author	:	Raghu Gopalakrishnan
-	Date	:	15th July 2019
+	Date	:	15th September 2019
 	Purpose	:	This Stored Procedure is used by the DBMon tool to capture details from sys.dm_hadr_database_replica_states
 	Version	:	1.0 GDRS
 	License:

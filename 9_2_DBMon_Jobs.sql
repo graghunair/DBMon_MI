@@ -1,3 +1,12 @@
+/*
+	Author	:	Raghu Gopalakrishnan
+	Date	:	18th September 2018
+	Purpose	:	Return actively running requets with related data
+	Version	:	1.4 W
+	License:
+	This script is provided "AS IS" with no warranties, and confers no rights.
+*/
+
 USE [msdb]
 GO
 

@@ -27,7 +27,7 @@ CREATE PROCEDURE [dbo].[uspDBMon_MI_GetMemoryUtilization]
 AS
 	/*
 		Author	:	Raghu Gopalakrishnan
-		Date	:	24th May 2019
+		Date	:	24th September 2019
 		Purpose	:	This Stored Procedure is used by the DBMon tool
 		Version	:	1.1 GMU
 		License:
