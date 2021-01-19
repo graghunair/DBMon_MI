@@ -143,7 +143,7 @@ INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter],[Config_Paramete
 VALUES('uspDBMon_rptGetMICurrentAlerts_TTL','358')
 --Strati-AF-SQLServer@email.wal-mart.com;
 INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter],[Config_Parameter_Value])
-VALUES('uspDBMon_rptGetMICurrentAlerts_Mail_Address','Strati-AF-SQLServer@email.wal-mart.com;Raghu.Gopalakrishnan@microsoft.com;vn502i6@wal-mart.com')
+VALUES('uspDBMon_rptGetMICurrentAlerts_Mail_Address','')
 INSERT INTO [dbo].[tblDBMon_Config_Details] ([Config_Parameter],[Config_Parameter_Value])
 VALUES('uspDBMon_rptGetMICurrentAlerts_Minutes_Down_Threshold','1')
 
