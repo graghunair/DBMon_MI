@@ -28,6 +28,38 @@ CREATE CLUSTERED INDEX [IDX_tblDBMon_Server_Resource_Stats] ON [dbo].[tblDBMon_S
 ALTER TABLE [dbo].[tblDBMon_Server_Resource_Stats] ADD CONSTRAINT DF_tblDBMon_Server_Resource_Stats_Date_Captured DEFAULT (GETDATE()) FOR [Date_Captured]
 GO
 
+INSERT INTO [dbo].[tblDBMon_Server_Resource_Stats](
+				[Start_Time],
+				[End_Time],
+				[Resource_Type],
+				[Resource_Name],
+				[SKU],
+				[Hardware_Generation],
+				[CPU_Count],
+				[Avg_CPU_Percent],
+				[Total_Storage_GB],
+				[Used_Storage_GB],
+				[IOPS],
+				[IO_Bytes_Read],
+				[IO_Bytes_Written],
+				[Date_Captured])
+SELECT			CAST(srs.[start_time] AS DATETIME) AS [Start_Time],
+				CAST(srs.[end_time] AS DATETIME) AS [End_Time],
+				srs.[resource_type] AS [Resource_Type],
+				srs.[resource_name] AS [Resource_Name],
+				srs.[sku] AS [SKU],
+				srs.[hardware_generation] AS [Hardware_Generation],
+				srs.[virtual_core_count] AS [CPU_Count],
+				srs.[avg_cpu_percent] AS [Avg_CPU_Percent],
+				CAST(srs.[reserved_storage_mb]/1024. AS DECIMAL(20,2)) AS [Total_Storage_GB],
+				CAST(srs.[storage_space_used_mb]/1024. AS DECIMAL(20,2)) AS [Used_Storage_GB],
+				srs.[io_requests] AS [IOPS],
+				srs.[io_bytes_read] AS [IO_Bytes_Read],
+				srs.[io_bytes_written] AS [IO_Bytes_Written],
+				GETDATE()
+FROM			[sys].[server_resource_stats] srs
+GO
+
 DROP PROC IF EXISTS [dbo].[uspDBMon_MI_GetServerResourceStats]
 GO
 CREATE PROC [dbo].[uspDBMon_MI_GetServerResourceStats]
@@ -56,8 +88,8 @@ INSERT INTO [dbo].[tblDBMon_Server_Resource_Stats](
 				[IO_Bytes_Read],
 				[IO_Bytes_Written],
 				[Date_Captured])
-SELECT			srs.[start_time] AS [Start_Time],
-				srs.[end_time] AS [End_Time],
+SELECT			CAST(srs.[start_time] AS DATETIME) AS [Start_Time],
+				CAST(srs.[end_time] AS DATETIME) AS [End_Time],
 				srs.[resource_type] AS [Resource_Type],
 				srs.[resource_name] AS [Resource_Name],
 				srs.[sku] AS [SKU],
@@ -72,7 +104,14 @@ SELECT			srs.[start_time] AS [Start_Time],
 				GETDATE()
 FROM			[sys].[server_resource_stats] srs
 LEFT OUTER JOIN [dbo].[tblDBMon_Server_Resource_Stats] dsrs
-		ON		(srs.start_time = dsrs.Start_Time AND srs.end_time = dsrs.End_Time)
+		ON		(
+						DATEPART(yy, srs.start_time) = DATEPART(yy, dsrs.Start_Time) 
+					AND DATEPART(mm, srs.start_time) = DATEPART(mm, dsrs.Start_Time) 
+					AND DATEPART(dd, srs.start_time) = DATEPART(dd, dsrs.Start_Time) 
+					AND DATEPART(hh, srs.start_time) = DATEPART(hh, dsrs.Start_Time) 
+					AND DATEPART(mi, srs.start_time) = DATEPART(mi, dsrs.Start_Time) 
+					AND DATEPART(ss, srs.start_time) = DATEPART(ss, dsrs.Start_Time) 
+				)
 WHERE			dsrs.Start_Time IS NULL
 ORDER BY		1
 
